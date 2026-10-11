@@ -9,9 +9,9 @@
 - Manifest web, ícone e migração SQL inicial com tabelas e políticas RLS para Supabase.
 
 ## Limitações importantes
-- Cadastro/login real ainda não está conectado a um provedor.
-- A interface guarda os dados em localStorage neste navegador.
-- A migração SQL não foi aplicada automaticamente a um projeto Supabase.
+- Cadastro/login por e-mail está implementado, mas depende de configurar um projeto Supabase e suas variáveis.
+- Sem Supabase configurado, os dados permanecem apenas em localStorage. Com Supabase configurado, há sincronização de snapshot por usuário; conflitos simultâneos ainda não são tratados.
+- A migração SQL ainda precisa ser executada no projeto Supabase do proprietário.
 - Exercícios usam um ícone ilustrativo, não uma demonstração anatômica verificada.
 - Notificações push, reprodução musical interna, publicação em lojas e testes automatizados não estão configurados.
 
