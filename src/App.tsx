@@ -54,7 +54,13 @@ export default function App() {
   const [logs, setLogs] = useState<WorkoutLog[]>(() => readStorage(STORAGE.logs, []));
   const [music, setMusic] = useState<MusicLink[]>(() => readStorage(STORAGE.music, []));
   const [progress, setProgress] = useState<ProgressEntry[]>(() => readStorage(STORAGE.progress, []));
-  const [water, setWater] = useState<number>(() => readStorage(STORAGE.water, 0));
+  const [water, setWater] = useState<number>(() => {
+    const saved = readStorage<{date:string; amount:number} | number>(STORAGE.water, 0);
+    if (typeof saved === 'number') return 0;
+    const now = new Date();
+    const today = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+    return saved.date === today ? saved.amount : 0;
+  });
   const [tab, setTab] = useState<Tab>('Início');
   const [showSetup, setShowSetup] = useState(() => !readStorage(STORAGE.profile, defaultProfile).onboardingComplete);
   const [goal, setGoal] = useState<Goal>(profile.goal);
@@ -81,7 +87,11 @@ export default function App() {
   useEffect(() => writeStorage(STORAGE.logs, logs), [logs]);
   useEffect(() => writeStorage(STORAGE.music, music), [music]);
   useEffect(() => writeStorage(STORAGE.progress, progress), [progress]);
-  useEffect(() => writeStorage(STORAGE.water, water), [water]);
+  useEffect(() => {
+    const now = new Date();
+    const today = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+    writeStorage(STORAGE.water, {date:today, amount:water});
+  }, [water]);
   useEffect(() => {
     if (!restActive || restSeconds <= 0) return;
     const id = window.setInterval(() => setRestSeconds((s) => Math.max(0, s - 1)), 1000);
