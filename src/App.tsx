@@ -64,7 +64,7 @@ export default function App() {
   const [name, setName] = useState(profile.name === 'Atleta' ? '' : profile.name);
   const [activeWorkout, setActiveWorkout] = useState<{ title: string; ids: string[] } | null>(null);
   const [exerciseIndex, setExerciseIndex] = useState(0);
-  const [setLogs, setSetLogs] = useState<Record<string, SetLog[]>>({});
+  const [exerciseSetLogs, setSetLogs] = useState<Record<string, SetLog[]>>({});
   const [restSeconds, setRestSeconds] = useState(0);
   const [restActive, setRestActive] = useState(false);
   const [newSongTitle, setNewSongTitle] = useState('');
@@ -100,7 +100,7 @@ export default function App() {
   }).length;
   const weekProgress = Math.min(100, Math.round(completedThisWeek / profile.daysPerWeek * 100));
   const activeExercise = activeWorkout ? library.find((e) => e.id === activeWorkout.ids[exerciseIndex]) : undefined;
-  const currentSets = activeExercise ? (setLogs[activeExercise.id] ?? Array.from({length:activeExercise.sets}, () => ({weight:'',reps:'',done:false}))) : [];
+  const currentSets = activeExercise ? (exerciseSetLogs[activeExercise.id] ?? Array.from({length:activeExercise.sets}, () => ({weight:'',reps:'',done:false}))) : [];
 
   function saveSetup() {
     const updated: Profile = { name: name.trim() || 'Atleta', goal, daysPerWeek: frequency, experience, place, onboardingComplete: true };
@@ -111,21 +111,21 @@ export default function App() {
   }
   function finishWorkout() {
     if (!activeWorkout) return;
-    const allSets = Object.values(setLogs).flat();
-    const completedExercises = Object.values(setLogs).filter((sets) => sets.some((s) => s.done)).length;
-    setLogs([]);
-    setLogsStateAfterFinish(activeWorkout.title, completedExercises, allSets.filter((s) => s.done).length);
-    setActiveWorkout(null);
-  }
-  function setLogsStateAfterFinish(workoutName: string, completedExercises: number, sets: number) {
-    setLogsHistory((prev) => prev);
-    setLogs((prev) => prev);
+    const allSets = Object.values(exerciseSetLogs).flat();
+    const completedExercises = Object.values(exerciseSetLogs).filter((sets) => sets.some((s) => s.done)).length;
     const now = new Date();
-    const entry: WorkoutLog = { date: now.toISOString().slice(0,10), workoutName, duration: 0, completedExercises, sets };
-    setLogsHistory((prev) => [...prev.filter((l) => !(l.date === entry.date && l.workoutName === entry.workoutName)), entry]);
+    const entry: WorkoutLog = {
+      date: now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0'),
+      workoutName: activeWorkout.title,
+      duration: 0,
+      completedExercises,
+      sets: allSets.filter((s) => s.done).length,
+    };
+    setLogs((prev) => [...prev.filter((l) => !(l.date === entry.date && l.workoutName === entry.workoutName)), entry]);
+    setSetLogs({});
+    setActiveWorkout(null);
     setNotice('Treino finalizado e registrado neste dispositivo.');
   }
-  const setLogsHistory = (fn: (prev: WorkoutLog[]) => WorkoutLog[]) => setLogs(fn);
   function updateSet(index: number, patch: Partial<SetLog>) {
     if (!activeExercise) return;
     const base = currentSets.map((s) => ({...s}));
