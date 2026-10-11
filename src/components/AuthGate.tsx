@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import { Dumbbell, LogIn, UserPlus, LogOut, LoaderCircle, Cloud, ShieldCheck } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
 import App from '../App';
@@ -55,7 +56,7 @@ export default function AuthGate() {
     return () => { window.removeEventListener('fitplan:storage-changed', sync); clearTimeout(timeout); };
   }, [session?.user.id, ready]);
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase) return;
     setBusy(true); setMessage('');
