@@ -2,3 +2,6 @@ project_id = "gclrarhluuucohyauyfd"
 
 [functions.cakto-webhook]
 verify_jwt = false
+
+[functions.cakto-claim]
+verify_jwt = true
