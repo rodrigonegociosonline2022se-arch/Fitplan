@@ -17,3 +17,12 @@
 ## Importante
 Esta etapa implementa o banco de permissões e a interface de teste/pagamento. **Não concede acesso por redirecionamento do checkout, por e-mail informado pelo comprador ou por evento não verificado.**
 A liberação automática depende da Edge Function e do formato autenticado do webhook Cakto. Até lá, não ative o bloqueio para clientes reais.
+
+## Projeto Supabase informado
+- Project ref: `gclrarhluuucohyauyfd`
+- Endpoint previsto: `https://gclrarhluuucohyauyfd.supabase.co/functions/v1/cakto-webhook`
+- Checkout: `https://pay.cakto.com.br/xcd5zew_1196723`
+- SQL adicional: `supabase/migrations/004_cakto_orders.sql` (ainda precisa ser executado).
+- Edge Function ainda **não foi publicada**. Não configure webhook ativo nem habilite `VITE_FITPLAN_PAYWALL_ENABLED` antes de validar a função.
+- No painel da Cakto, obtenha o ID real da oferta e configure um segredo exclusivo para o webhook. Não coloque segredos no repositório.
+- A liberação exige vinculação autenticada do pedido ao usuário; apenas o e-mail do comprador ou um redirecionamento não bastam.
