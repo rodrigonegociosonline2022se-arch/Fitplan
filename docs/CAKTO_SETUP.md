@@ -26,3 +26,15 @@ A liberação automática depende da Edge Function e do formato autenticado do w
 - Edge Function ainda **não foi publicada**. Não configure webhook ativo nem habilite `VITE_FITPLAN_PAYWALL_ENABLED` antes de validar a função.
 - No painel da Cakto, obtenha o ID real da oferta e configure um segredo exclusivo para o webhook. Não coloque segredos no repositório.
 - A liberação exige vinculação autenticada do pedido ao usuário; apenas o e-mail do comprador ou um redirecionamento não bastam.
+
+
+## Modelo confirmado pela tela Cakto (disparo Individual)
+O modelo ilustrativo exibido no painel tem:
+- `secret` no corpo JSON; `event` = `purchase_approved`, `refund` ou `chargeback`;
+- `data.id` é UUID do pedido; `data.offer.id` é identificador da oferta;
+- `data.customer.email`, `data.status` (ex.: `paid`), `data.amount` (número);
+- `data.offer.price` e `data.baseAmount` podem diferir de `data.amount` por desconto.
+
+**Os dados no exemplo são fictícios.** O ID de oferta e o segredo precisam vir da configuração real do FitPlan, não do modelo ilustrativo. A validação do valor de 49,90 na função exige confirmar a unidade e o efeito de cupons/descontos nos eventos reais.
+
+A função `cakto-webhook` no repositório corresponde à estrutura básica desse modelo, mas **não foi implantada nem testada contra evento real**. Não habilitar o paywall antes de testar compra aprovada, estorno e vinculação da compra ao usuário.
