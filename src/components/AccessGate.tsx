@@ -12,6 +12,9 @@ export default function AccessGate({ session, children }: { session: Session; ch
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [now, setNow] = useState(Date.now());
+  const [purchaseId, setPurchaseId] = useState('');
+  const [claimMessage, setClaimMessage] = useState('');
+  const [claimBusy, setClaimBusy] = useState(false);
   useEffect(() => {
     let mounted = true;
     const refresh = async () => {
@@ -46,6 +49,9 @@ export default function AccessGate({ session, children }: { session: Session; ch
       ? <a className="primary full" style={{display:'flex',justifyContent:'center',padding:14,textDecoration:'none'}} href={checkout} target="_blank" rel="noopener noreferrer">Comprar acesso vitalício</a>
       : <p className="auth-message">Checkout em preparação. Seus dados estão preservados.</p>}
     <p className="auth-secure">Após o pagamento ser confirmado, seu acesso será liberado automaticamente quando a integração estiver ativa.</p>
-    <button onClick={() => window.location.reload()}>Já paguei — verificar novamente</button>
+    <label style={{display:'block',marginTop:18}}>Número do pedido Cakto<input value={purchaseId} onChange={e=>setPurchaseId(e.target.value)} placeholder="Cole o ID do pedido" /></label>
+    <button disabled={claimBusy || !purchaseId.trim()} onClick={async()=>{setClaimBusy(true);setClaimMessage('');const {data,error}=await supabase!.functions.invoke('cakto-claim',{body:{purchase_id:purchaseId.trim()}});setClaimBusy(false);if(error || !data?.claimed)setClaimMessage('Pedido ainda não confirmado ou e-mail da compra diferente do cadastro.');else window.location.reload();}}>Já paguei — validar meu pedido</button>
+    {claimMessage&&<p className="auth-message" role="status">{claimMessage}</p>}
+    <button onClick={() => window.location.reload()}>Atualizar situação do acesso</button>
   </div></div>;
 }
