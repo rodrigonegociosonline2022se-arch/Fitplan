@@ -1,0 +1,4 @@
+project_id = "gclrarhluuucohyauyfd"
+
+[functions.cakto-webhook]
+verify_jwt = false
